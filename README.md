@@ -14,10 +14,8 @@ var bsConfig = require("gulp-bootstrap-configurator");
 
 gulp.task('make-bootstrap', function(){
   gulp.src("./config.json")
-    .pipe(bsConfig({
-      path: './node_modules/bootstrap',
-      name: 'bootstrap.css'
-    }))
+    .pipe(bsConfig())
     .pipe(gulp.dest("./assets"));
 });
 ```
+It will create `bootstrap.css` in directory `assets`.

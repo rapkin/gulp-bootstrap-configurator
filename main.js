@@ -20,16 +20,23 @@ function makeBootstrap(configText, callback) {
 
     sequence.forEach(function(name, i){
       name = name + '.less';
-      if (config.css.indexOf(name) > -1) {
-        sequence[i] = '';
+      if (config.css.indexOf(name) > -1)
         data.push('@import "' + name + "\";");
-      }
     });
 
     callback(null, data.join("\n"));
 }
 
 module.exports = function(opt) {
+  opt = opt || {};
+  opt.compress = opt.compress || false;
+  opt.bower = opt.bower || false;
+  if (! opt.base) opt.base = Path.dirname(module.parent.filename);
+  if (! opt.name && opt.compress) opt.name = 'bootstrap.min.css';
+  if (! opt.name) opt.name = 'bootstrap.css';
+  if (! opt.path && opt.bower) opt.path = 'bower_components/bootstrap';
+  if (! opt.path) opt.path = 'node_modules/bootstrap';
+
   return through.obj(function (file, encoding, callback){
     if (file.isNull()) {
       return callback(null, file);
@@ -44,7 +51,8 @@ module.exports = function(opt) {
         return callback(new gutil.PluginError(PLUGIN_NAME, err));
       }
 
-      less.render(data, {paths: [Path.join(opt.path + 'less')], compress: true}, function (e, output) {
+      var bsDir = Path.join(opt.base, opt.path, 'less');
+      less.render(data, {paths: [bsDir], compress: opt.compress}, function (e, output) {
         file.contents = new Buffer(output.css);
         file.path = Path.join(file.base, opt.name)
         callback(null, file);
