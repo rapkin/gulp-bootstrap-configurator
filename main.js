@@ -25,7 +25,6 @@ function makeBootstrap(configText, callback) {
         data.push('@import "' + name + "\";");
       }
     });
-    console.log(sequence);
 
     callback(null, data.join("\n"));
 }
@@ -45,7 +44,7 @@ module.exports = function(opt) {
         return callback(new gutil.PluginError(PLUGIN_NAME, err));
       }
 
-      less.render(data, {paths: [opt.path + '/less'], compress: true}, function (e, output) {
+      less.render(data, {paths: [Path.join(opt.path + 'less')], compress: true}, function (e, output) {
         file.contents = new Buffer(output.css);
         file.path = Path.join(file.base, opt.name)
         callback(null, file);
