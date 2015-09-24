@@ -1,0 +1,31 @@
+{
+  "name": "gulp-bootstrap-configurator",
+  "version": "0.1.0",
+  "description": "Build bootstrap.css with your own configuration file",
+  "main": "main.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rapkin/gulp-bootstrap-configurator.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rapkin/gulp-bootstrap-configurator/issues"
+  },
+  "homepage": "https://github.com/rapkin/gulp-bootstrap-configurator",
+  "author": "rapkin <mikola.parfenyuck@gmail.com> (http://rapkin.com.ua/)",
+  "keywords": [
+    "bootstrap",
+    "configuration",
+    "bootstrap config.json"
+  ],
+  "tags": [
+    "build",
+    "system",
+    "make",
+    "tool"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "gulp-util": "^3.0.6",
+    "through2": "^2.0.0"
+  }
+}
