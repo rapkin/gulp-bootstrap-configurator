@@ -1,28 +1,36 @@
 var through = require('through2');
 var gutil = require('gulp-util');
 var Path = require('path');
+var less = require('less');
 var missed  = require('./missed.json');
 
 const PLUGIN_NAME = 'gulp-bootstrap-configurator';
+var sequence = ["mixins", "normalize", "print", "glyphicons", "scaffolding", "type", "code", "grid", "tables", "forms", "buttons", "component-animations", "dropdowns", "button-groups", "input-groups", "navs", "navbar", "breadcrumbs", "pagination", "pager", "labels", "badges", "jumbotron", "thumbnails", "alerts", "progress-bars", "media", "list-group", "panels", "responsive-embed", "wells", "close", "modals", "tooltip", "popovers", "carousel", "utilities", "responsive-utilities"];
 
 function makeBootstrap(configText, callback) {
     var data = [];
     var config = JSON.parse(configText);
 
-    for (var type in missed)
-      for (var name in missed[type])
-        config[type][name] = missed[type][name];
+    config.css = config.css.concat(missed.css);
+    for (var name in missed.vars)
+        config.vars[name] = missed.vars[name];
 
     for (var name in config.vars)
         data.push(name + ':  ' + config.vars[name] + ";");
 
-    for (var i in config.css)
-        data.push('@import "' + config.css[i] + "\"");
+    sequence.forEach(function(name, i){
+      name = name + '.less';
+      if (config.css.indexOf(name) > -1) {
+        sequence[i] = '';
+        data.push('@import "' + name + "\";");
+      }
+    });
+    console.log(sequence);
 
-    callback(null, data.join("\n") + "\n");
+    callback(null, data.join("\n"));
 }
 
-module.exports = function(destName) {
+module.exports = function(opt) {
   return through.obj(function (file, encoding, callback){
     if (file.isNull()) {
       return callback(null, file);
@@ -37,9 +45,11 @@ module.exports = function(destName) {
         return callback(new gutil.PluginError(PLUGIN_NAME, err));
       }
 
-      file.contents = new Buffer(data);
-      file.path = Path.join(file.base, destName)
-      callback(null, file);
+      less.render(data, {paths: [opt.path + '/less'], compress: true}, function (e, output) {
+        file.contents = new Buffer(output.css);
+        file.path = Path.join(file.base, opt.name)
+        callback(null, file);
+      });
     });
   });
 }
