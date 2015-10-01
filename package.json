@@ -1,6 +1,6 @@
 {
   "name": "gulp-bootstrap-configurator",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Build bootstrap.css with your own configuration file",
   "main": "main.js",
   "repository": {
@@ -27,6 +27,7 @@
   "dependencies": {
     "gulp-util": "^3.0.6",
     "less": "^2.5.1",
-    "through2": "^2.0.0"
+    "through2": "^2.0.0",
+    "uglify-js": "^2.4.24"
   }
 }
