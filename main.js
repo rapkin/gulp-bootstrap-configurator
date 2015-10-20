@@ -1,3 +1,6 @@
+/* jshint node:true */
+'use strict';
+
 var through = require('through2');
 var gutil = require('gulp-util');
 var Path = require('path');
@@ -5,10 +8,9 @@ var fs = require('fs');
 var less = require('less');
 var uglify = require("uglify-js");
 var missed  = require('./missed.json');
+var sequence = require('./sequence.json');
 
-const PLUGIN_NAME = 'gulp-bootstrap-configurator';
-var sequence = ["mixins", "normalize", "print", "glyphicons", "scaffolding", "type", "code", "grid", "tables", "forms", "buttons", "component-animations", "dropdowns", "button-groups", "input-groups", "navs", "navbar", "breadcrumbs", "pagination", "pager", "labels", "badges", "jumbotron", "thumbnails", "alerts", "progress-bars", "media", "list-group", "panels", "responsive-embed", "wells", "close", "modals", "tooltip", "popovers", "carousel", "utilities", "responsive-utilities"];
-var js_seq = ["transition", "alert", "button", "carousel", "collapse", "dropdown", "modal", "tooltip", "popover", "scrollspy", "tab", 'affix'];
+var PLUGIN_NAME = 'gulp-bootstrap-configurator';
 
 function makeBootstrap(configText, type, callback) {
     var data = [];
@@ -22,7 +24,7 @@ function makeBootstrap(configText, type, callback) {
       for (var name in config.vars)
           data.push(name + ':  ' + config.vars[name] + ";");
 
-      sequence.forEach(function(name, i){
+      sequence.less.forEach(function(name){
         name = name + '.less';
         if (config.css.indexOf(name) > -1)
           data.push('@import "' + name + "\";");
@@ -31,7 +33,7 @@ function makeBootstrap(configText, type, callback) {
     }
 
     if (type == 'js') {
-      js_seq.forEach(function(name, i){
+      sequence.js.forEach(function(name){
         name = name + '.js';
         if (config.js.indexOf(name) > -1) data.push(name);
       });
@@ -91,7 +93,7 @@ function constructor(type) {
             cwd: file.cwd,
           });
 
-          data.forEach(function(name, i){ data[i] = Path.join(jsDir, name) });
+          data.forEach(function(name, i){ data[i] = Path.join(jsDir, name); });
           data.unshift(Path.join(__dirname, 'header.js'));
 
           if (opt.compress) {
@@ -107,7 +109,7 @@ function constructor(type) {
         }
       });
     });
-  }
+  };
 }
 
 module.exports = {
