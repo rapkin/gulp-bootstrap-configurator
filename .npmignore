@@ -2,3 +2,6 @@
 assets/
 config.json
 gulpfile.js
+.git
+.gitignore
+LICENSE
