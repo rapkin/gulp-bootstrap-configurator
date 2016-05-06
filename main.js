@@ -7,6 +7,8 @@ var Path = require('path');
 var fs = require('fs');
 var less = require('less');
 var uglify = require("uglify-js");
+var bowerConfig = require('bower-config');
+var findConfig = require('find-config');
 var missed  = require('./missed.json');
 var sequence = require('./sequence.json');
 
@@ -46,9 +48,20 @@ function constructor(type) {
   return function(opt) {
     opt = opt || {};
     opt.bower = opt.bower || false;
-    opt.path = 'node_modules/bootstrap';
-    if (opt.bower) opt.path = 'bower_components/bootstrap';
+
     if (! opt.base) opt.base = Path.dirname(module.parent.filename);
+
+    if(!opt.path && !opt.bower) {
+      opt.path = 'node_modules/bootstrap';
+      try {
+        var resolvedPath = require.resolve('bootstrap');
+        var packagePath = findConfig('package.json', { cwd: resolvedPath });
+        opt.path = (packagePath && Path.dirname(packagePath)) || opt.path;
+      } catch(e) { }
+    } else if(!opt.path) {
+      var bc = bowerConfig.create(opt.base).load().toObject();
+      opt.path = Path.join(bc.directory, 'bootstrap');
+    }
 
     opt.compress = opt.compress || false;
     if (! opt.name && opt.compress) opt.name = 'bootstrap.min.'+type;
@@ -69,7 +82,7 @@ function constructor(type) {
           return callback(new gutil.PluginError(PLUGIN_NAME, err));
         }
 
-        var bsDir = Path.join(opt.base, opt.path);
+        var bsDir = Path.isAbsolute(opt.path) ? opt.path : Path.join(opt.base, opt.path);
 
         if (type == 'css') {
           var lessDir = Path.join(bsDir, 'less');
