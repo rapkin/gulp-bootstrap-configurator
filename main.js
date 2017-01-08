@@ -87,22 +87,23 @@ function constructor(type) {
         if (type == 'css') {
           var lessDir = Path.join(bsDir, 'less');
           var cssFile = new gutil.File({
-            base: opt.base,
-            path: Path.join(file.base, opt.name),
+            path: Path.join(opt.base, opt.name),
             cwd: file.cwd,
           });
 
           less.render(data, {paths: [lessDir], compress: opt.compress}, function (e, output) {
-            cssFile.contents = new Buffer(output.css);
-            callback(null, cssFile);
+              if (e) callback(e);
+              else {
+                cssFile.contents = new Buffer(output.css);
+                callback(null, cssFile);
+              }
           });
         }
 
         if (type == 'js') {
           var jsDir = Path.join(bsDir, 'js');
           var jsFile = new gutil.File({
-            base: opt.base,
-            path: Path.join(file.base, opt.name),
+            path: Path.join(opt.base, opt.name),
             cwd: file.cwd,
           });
 

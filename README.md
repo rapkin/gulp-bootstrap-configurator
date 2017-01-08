@@ -1,5 +1,5 @@
 # gulp-bootstrap-configurator
-Build bootstrap with your own configuration file
+Build bootstrap with your own configuration file. You can make your own 'config.json' with online tool [http://getbootstrap.com/customize/](http://getbootstrap.com/customize/)
 
 ### Installation
 Install `gulp-bootstrap-configurator` via `npm`:
